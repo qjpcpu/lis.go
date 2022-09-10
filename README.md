@@ -1,6 +1,10 @@
 How to Write a (Lisp) Interpreter (in Golang)
 ==================================================
 
+# Documentation
+
+The documentation for this tutorial is [here](https://qjpcpu.github.io/blog/2022/09/09/how-to-write-your-interpreter/), but it's in Chinese. Feel free to translate to English.
+
 # Try REPL
 
 ```
