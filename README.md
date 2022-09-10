@@ -9,14 +9,14 @@ go build && ./lis-go
 
 # Atoms
 
-This tiny interpreter support kinds atoms:
+This tiny interpreter support 4 atoms:
 * symbol
 * boolean
 * integer and float
 
 # Operations
 
-This tiny interpreter support 8 operations:
+This tiny interpreter support 10 operations:
 
 * `if`
 
