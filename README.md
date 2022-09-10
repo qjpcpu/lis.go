@@ -59,5 +59,5 @@ compare operations greater than/less than/equal.
 
 # In production
 
-This is just a simple demo for study. If you want an interpreter in production,
+This is just a simple demo for learning how to write interpreter. If you need one in production,
 please use [glisp](https://github.com/qjpcpu/glisp), and refer to its documentation [glisp wiki](https://github.com/qjpcpu/glisp/wiki).
