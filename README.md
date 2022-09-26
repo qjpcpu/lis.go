@@ -41,6 +41,16 @@ define a variable.
 ```
 
 
+* `define-func`
+
+define a function.
+
+``` clojure
+(define-func name (arg1 args2) body)
+
+(define-func name ** (a) (* a a)) 
+```
+
 * `set!`
 
 update an exist variable.
