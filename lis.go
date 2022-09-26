@@ -22,12 +22,18 @@ type List struct {
 	Rest *List
 }
 type Function func(*Env, []Expression) Expression
+type UserFunction struct {
+	Name string
+	Args []string
+	Body []Expression
+}
 type Bool bool
 type Integer int64
 type Float float64
 
-func (s Symbol) Sexpr() string   { return string(s) }
-func (s Function) Sexpr() string { return `function` }
+func (s Symbol) Sexpr() string       { return string(s) }
+func (s Function) Sexpr() string     { return `function` }
+func (s UserFunction) Sexpr() string { return `user-function:` + s.Name }
 func (s Bool) Sexpr() string {
 	if s {
 		return `true`
@@ -188,6 +194,25 @@ func evalList(x *List, env *Env) Expression {
 		vvar, expr := x.Rest.Val, x.Rest.Rest.Val
 		env.Find(vvar.(Symbol))[vvar.Sexpr()] = expr
 		return expr
+	case "define-func":
+		var userf UserFunction
+		// (define-func name (arg1 arg2) body)
+		name := string(x.Rest.Val.(Symbol))
+		var args []string
+		argsExpr := x.Rest.Rest.Val.(*List)
+		for argsExpr.Val != nil {
+			args = append(args, string(argsExpr.Val.(Symbol)))
+			argsExpr = argsExpr.Rest
+		}
+		userf.Name = name
+		userf.Args = args
+		expr := x.Rest.Rest.Rest
+		for expr.Val != nil {
+			userf.Body = append(userf.Body, expr.Val)
+			expr = expr.Rest
+		}
+		env.scope[name] = userf
+		return userf
 	default:
 		// (function arg...)
 		proc := eval(x.Val, env)
@@ -196,8 +221,23 @@ func evalList(x *List, env *Env) Expression {
 			args = append(args, eval(ptr.Val, env))
 			ptr = ptr.Rest
 		}
+		if uf, ok := proc.(UserFunction); ok {
+			return callUserFunction(env, uf, args)
+		}
 		return proc.(Function)(NewEnv(env), args)
 	}
+}
+
+func callUserFunction(env *Env, f UserFunction, args []Expression) Expression {
+	env = NewEnv(env)
+	for i, arg := range f.Args {
+		env.scope[arg] = args[i]
+	}
+	var ret Expression
+	for _, expr := range f.Body {
+		ret = eval(expr, env)
+	}
+	return ret
 }
 
 type TokenStream struct {
